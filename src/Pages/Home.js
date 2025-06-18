@@ -1,9 +1,10 @@
 import React from 'react'
+import Spinner from '../Loadable/Spinner'
 
 function Home() {
   return (
     <div>
-        This is Home
+      <Spinner />
       
     </div>
   )
