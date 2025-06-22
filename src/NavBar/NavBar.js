@@ -41,7 +41,7 @@ export default function NavBar() {
   ];
 
   return (
-    <header className="flex items-center sticky top-0 z-50 justify-between p-4 shadow-md bg-blue-100 text-gray-600  border-black">
+    <header className="flex items-center sticky top-0 z-50  transition-all justify-between p-2 shadow-md bg-blue-70 text-gray-600 bg-white border-black">
       {/* Mobile Menu Button */}
       <div className="md:hidden">
         <IconButton
@@ -85,12 +85,12 @@ export default function NavBar() {
 
       {/* Mobile Drawer */}
       <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-        <div className="w-64 p-4">
+        <div className="w-55 p-4">
           <List>
             {navLinks.map(({ label, path }) => (
-              <ListItem key={path} button onClick={toggleDrawer(false)}>
-                <Link to={path} className="w-full text-black no-underline">
-                  <ListItemText primary={label} />
+              <ListItem key={path} button onClick={toggleDrawer(false)} className=" ">
+                <Link to={path} className="w-full text-black text-md  ">
+                  <ListItemText primary={label} sx={{font:"bold"}}/>
                 </Link>
               </ListItem>
             ))}
