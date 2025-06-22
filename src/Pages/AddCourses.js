@@ -68,7 +68,7 @@ const AddCourses = () => {
         autoPlay
         loop
         muted
-        className="absolute w-full h-screen  object-cover z-0"
+        className="absolute w-full h-full  object-cover z-0"
       >
         <source src="/mathsbg.mp4" type="video/mp4" />
         Your browser does not support the video tag.
@@ -78,7 +78,7 @@ const AddCourses = () => {
           initial={{ scale: 0.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="relative z-10 w-full flex justify-center items-center mb-10"
+          className="relative z-20 w-full flex justify-center items-center mb-10"
         >
               <div className="bg-white bg-opacity-90 p-4 md:p-5 rounded-2xl shadow-xl w-[90%] md:w-[75%] mt-3">
           <div className="text-center mb-4">
