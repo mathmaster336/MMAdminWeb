@@ -3,6 +3,7 @@ import Loadable from "../Loadable/loadable";
 import Login from "../Authentication/Login";
 import Register from "../Authentication/Register";
 import AddCourses from "../Pages/AddCourses";
+import Courses from "../Pages/Courses";
 
 const AdminLayput = Loadable(lazy(() => import("../Layouts/AdminLayout")));
 const BlankLayout = Loadable(lazy(() => import("../Layouts/BlankLayout")));
@@ -15,6 +16,8 @@ const routes = [
     children: [
       { path: "/home", element: <Home /> },
       { path: "/addcourses", element: <AddCourses /> },
+      { path: "/courses", element: <Courses /> },
+
     ],
   },
   {

@@ -39,7 +39,7 @@ const Register = () => {
       email: email,
       password: password,
     };
-    const res = MMapi.post("/admin/signup", req);
+    const res = MMapi.post("/", req);
     console.log("Logged in with:", email);
     // navigate("/login");
   };
