@@ -6,6 +6,8 @@ import OtpInput from "react-otp-input";
 import { TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import MMapi from "../Services/MMapi";
+import { db } from "../firebase.js";
+import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
   //   const [step, setStep] = useState(1); // 1 for email/password, 2 for phone
@@ -14,8 +16,8 @@ const Register = () => {
   const [cpassword, setcpassword] = useState("");
 
   const navigate = useNavigate();
-
-  const handleEmailLogin = () => {
+  const handleEmailLogin = async () => {
+    debugger;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
 
@@ -33,15 +35,23 @@ const Register = () => {
 
     if (password !== cpassword) {
       alert("Password and Confirm Password should be same");
+      return;
     }
 
     const req = {
       email: email,
       password: password,
     };
-    const res = MMapi.post("/", req);
-    console.log("Logged in with:", email);
-    // navigate("/login");
+
+    try {
+      // Insert data into 'mmadmin' collection, document ID 'MMadmin'
+      await setDoc(doc(db, "testCollection", "user"), req);
+      alert("Data inserted successfully!");
+      // navigate("/login"); // if using react-router
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert("Failed to insert data.");
+    }
   };
 
   return (

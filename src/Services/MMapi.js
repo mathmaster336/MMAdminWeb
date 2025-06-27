@@ -1,20 +1,21 @@
 // src/utils/axiosInstance.js
-import axios from 'axios';
+import axios from "axios";
+import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
 
 // Create an Axios instance
 const MMapi = axios.create({
-  // baseURL: 'https://api-t6kumycyca-uc.a.run.app', 
-  baseURL: 'http://127.0.0.1:5001/mathmaster-cbffc/us-central1/api/', // Change to your API base URL
+  baseURL: "https://asia-south2-mathmaster-cbffc.cloudfunctions.net/addmessage",
+  // baseURL: "http://127.0.0.1:5001/mathmaster-cbffc/asia-south2/addmessage", // Change to your API base URL
   // Change to your API base URL
-//   timeout: 10000,
+  //   timeout: 10000,
 });
 
 // Add a request interceptor to attach token
 MMapi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token'); // or sessionStorage / cookies
+    const token = getLocalStorage("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.authorization = `Bearer ${token}`; // ✅ add Bearer prefix
     }
     return config;
   },
@@ -23,11 +24,13 @@ MMapi.interceptors.request.use(
 
 // Optional: Add a response interceptor (e.g., for global error handling)
 MMapi.interceptors.response.use(
-  (response) => {return response.data},
+  (response) => {
+    return response.data;
+  },
   (error) => {
     if (error.response?.status === 401) {
       // Auto logout or redirect if needed
-      console.warn('Unauthorized - maybe redirect to login');
+      console.warn("Unauthorized - maybe redirect to login");
     }
     return Promise.reject(error);
   }

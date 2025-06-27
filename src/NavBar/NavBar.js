@@ -72,7 +72,7 @@ export default function NavBar() {
               {label}
             </Link>
           ))}
-            <Link
+          <Link
             to="#"
             onClick={handleLogout}
             className="hover:text-red-600 hover:font-semibold text-xl"
@@ -80,7 +80,6 @@ export default function NavBar() {
             Logout
           </Link>
         </div>
-        
       </nav>
 
       {/* Mobile Drawer */}
@@ -88,9 +87,14 @@ export default function NavBar() {
         <div className="w-55 p-4">
           <List>
             {navLinks.map(({ label, path }) => (
-              <ListItem key={path} button onClick={toggleDrawer(false)} className=" ">
+              <ListItem
+                key={path}
+                button
+                onClick={toggleDrawer(false)}
+                className=" "
+              >
                 <Link to={path} className="w-full text-black text-md  ">
-                  <ListItemText primary={label} sx={{font:"bold"}}/>
+                  <ListItemText primary={label} sx={{ font: "bold" }} />
                 </Link>
               </ListItem>
             ))}

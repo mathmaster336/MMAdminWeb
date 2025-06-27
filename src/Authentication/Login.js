@@ -4,6 +4,9 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import OtpInput from "react-otp-input";
 import { TextField } from "@mui/material";
+import MMapi from "../Services/MMapi";
+import { setLocalStorage } from "../Utils/HelperMethods/Localstorage";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminLogin() {
   //   const [step, setStep] = useState(1); // 1 for email/password, 2 for phone
@@ -14,14 +17,29 @@ export default function AdminLogin() {
   const [otp, setOtp] = useState("");
   const [serverOtp, setServerOtp] = useState("1234"); // Simulate backend OTP
 
-  const handleEmailLogin = () => {
-    // if (!email || !password) {
-    //   alert("Please enter email and password");
-    //   return;
-    // }
-    // Simulate email/password login
-    console.log("Logged in with:", email);
-    setStep(2);
+  const navigate = useNavigate();
+
+  const handleEmailLogin = async () => {
+    debugger;
+    const req = {
+      email,
+      password,
+    };
+
+    try {
+      const res = await MMapi.post("/auth/adminlogin", req);
+      if (res?.token) {
+        setLocalStorage("token", res.token);
+        alert("Login successful");
+        navigate("/home");
+        // Optionally redirect or fetch user data here
+      } else {
+        alert("Login failed. Invalid credentials.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong during login.");
+    }
   };
 
   const handleSendOtp = () => {
