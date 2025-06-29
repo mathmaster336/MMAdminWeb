@@ -1,77 +1,86 @@
-import React, { useState } from "react";
-// import { FaFilePdf, FaImage, FaVideo, FaFont } from "react-icons/fa";
+import React from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import { motion } from "framer-motion";
 
-function CourseCard() {
-  const [data, setData] = useState([
-    {
-      courseName: "Web Api",
-      subDesc: "ASP.NET Web API",
-      mentorName: "Mangesh",
-      types: ["PDF", "Image", "Video"],
-    },
-    {
-      courseName: "React",
-      subDesc: "React.js with Hooks",
-      mentorName: "Mangesh",
-      types: ["PDF", "Image", "Video"],
-    },
-    {
-      courseName: "Sql",
-      subDesc: "Sql with api and fronted",
-      mentorName: "Mangesh",
-      types: ["PDF", "Image", "Video"],
-    },
-  ]);
-
+function CourseCard({ courseInfo }) {
   const typeIcons = {
     PDF: <PictureAsPdfIcon className="text-red-500" />,
     Image: <ImageIcon className="text-blue-500" />,
     Video: <VideocamIcon className="text-purple-500" />,
   };
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1 },
+    }),
+  };
+
   return (
-    <>
-      <div className="grid grid-cols-1  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 p-2">
-        {data.map((item, index) => (
-          <div
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-6 gap-5 p-4">
+      {courseInfo.map((item, index) => {
+        const types = [];
+        if (item.Video) types.push("Video");
+        if (item.pdf) types.push("PDF");
+        if (item.images) types.push("Image");
+
+        return (
+          <motion.div
+            /* …framer‑motion props… */
             key={index}
-            className="bg-white shadow-md rounded-lg flex flex-col items-start transition transform hover:scale-105 hover:shadow-lg duration-300"
+            variants={cardVariants}
+            custom={index}
+            initial="hidden"
+            animate="visible"
+            className="bg-white shadow-md border border-l-blue-500 border-b-blue-400 border-r-blue-500  md:rounded-2xl rounded-xl flex flex-col hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 md:w-full max-w-sm mx-auto"
           >
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQROxNeobSXYoNRS0Q05773BHuOcK_ilTrcdg&s"
-              alt="Product"
-              className="w-full h-52 object-cover rounded-md mb-2 "
+              src={item.introimage || "/placeholder.jpg"}
+              alt="Course Thumbnail"
+              className="w-full h-48 object-cover md:rounded-t-2xl rounded-t-xl"
             />
-            <hr className="border-red-400 w-full mb-2" />
-            <div className="font-bold text-lg">{item.courseName}</div>
-            <p className="mt-1 font-medium text-lg text-left">{item.subDesc}</p>
-            <p className="text-sm text-gray-500 text-left">
-              Mentor Name : {item.mentorName}
-            </p>
-            <div className="text-sm text-gray-600 flex gap-2 flex-wrap mt-2">
-              {item.types.map((type, typeIndex) => (
-                <button
-                  key={typeIndex}
-                  className="bg-gray-200 px-2 py-1 rounded text-xs flex items-center gap-1"
-                >
-                  <span className="text-base">
-                    {typeIcons[type] || <PictureAsPdfIcon />}
-                  </span>
-                  <span>{type}</span>
+
+            <div className="p-4 flex-1 flex flex-col">
+              <h2 className="font-bold text-xl mb-1">{item.courseName}</h2>
+              <p className="text-gray-800 text-lg mb-1">
+                Mentor:{" "}
+                <span className="font-semibold text-lg">{item.mentorName}</span>
+              </p>
+
+              {/* Scrollable description */}
+              <div className="text-lg text-gray-800 max-h-20 overflow-y-auto pr-1 custom-scrollbar flex-1">
+                {item.shortdesc}
+              </div>
+
+              {/* === NEW FLEX ROW (types + action button) === */}
+              <div className="flex items-center justify-between mt-4">
+                {/* resource type chips */}
+                <div className="flex flex-wrap gap-2">
+                  {types.map((type, i) => (
+                    <button
+                      key={i}
+                      className="bg-gray-200 px-2 py-1 rounded text-xs flex items-center gap-1"
+                    >
+                      {typeIcons[type]}
+                      <span>{type}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* main action button */}
+                <button className="bg-blue-600 text-white hover:bg-white hover:text-blue-600 border hover:border-blue-600 px-6 py-1 text-sm rounded transition-all duration-200 hover:scale-105">
+                  Content
                 </button>
-              ))}
+              </div>
             </div>
-            <button className="absolute bottom-1 right-1 bg-green-500 text-white text-sm px-2 py-1 rounded hover:bg-green-600">
-              Content
-            </button>
-          </div>
-        ))}
-      </div>
-    </>
+          </motion.div>
+        );
+      })}
+    </div>
   );
 }
-
 export default CourseCard;
