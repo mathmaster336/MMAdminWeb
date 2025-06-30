@@ -4,7 +4,7 @@ import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
 
 // Create an Axios instance
 const MMapi = axios.create({
-  baseURL: "https://asia-south2-mathmaster-cbffc.cloudfunctions.net/addmessage",
+  baseURL: "https://addmessage-t6kumycyca-em.a.run.app",
   // baseURL: "http://127.0.0.1:5001/mathmaster-cbffc/asia-south2/addmessage", // Change to your API base URL
   // Change to your API base URL
   //   timeout: 10000,
@@ -17,6 +17,7 @@ MMapi.interceptors.request.use(
     if (token) {
       config.headers.authorization = `Bearer ${token}`; // ✅ add Bearer prefix
     }
+    config.headers.userType = "admin";
     return config;
   },
   (error) => Promise.reject(error)

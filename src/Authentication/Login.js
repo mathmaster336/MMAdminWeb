@@ -7,6 +7,7 @@ import { TextField } from "@mui/material";
 import MMapi from "../Services/MMapi";
 import { setLocalStorage } from "../Utils/HelperMethods/Localstorage";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function AdminLogin() {
   //   const [step, setStep] = useState(1); // 1 for email/password, 2 for phone
@@ -16,10 +17,12 @@ export default function AdminLogin() {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [serverOtp, setServerOtp] = useState("1234"); // Simulate backend OTP
+  const [buttonClick, setbuttonClick] = useState(false);
 
   const navigate = useNavigate();
 
   const handleEmailLogin = async () => {
+    setbuttonClick(true);
     debugger;
     const req = {
       email,
@@ -28,6 +31,7 @@ export default function AdminLogin() {
 
     try {
       const res = await MMapi.post("/auth/adminlogin", req);
+
       if (res?.token) {
         setLocalStorage("token", res.token);
         alert("Login successful");
@@ -38,7 +42,9 @@ export default function AdminLogin() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Something went wrong during login.");
+      alert("Api Error");
+    } finally {
+      setbuttonClick(false);
     }
   };
 
@@ -102,9 +108,18 @@ export default function AdminLogin() {
 
               <button
                 onClick={handleEmailLogin}
-                className="w-full bg-blue-500 text-white py-3 mt-5 mb-5 rounded hover:bg-blue-600 border hover:border-gray-600"
+                disabled={buttonClick}
+                className={`w-full py-3 mt-5 mb-5 rounded border ${
+                  buttonClick
+                    ? "bg-blue-300 text-white cursor-not-allowed border border-blue-700"
+                    : "bg-blue-500 text-white hover:bg-blue-600 hover:border-gray-600"
+                }`}
               >
-                Next
+                {!buttonClick ? (
+                  "Login"
+                ) : (
+                  <CircularProgress size={22} className="text-white" />
+                )}
               </button>
             </div>
           )}

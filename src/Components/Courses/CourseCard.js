@@ -4,7 +4,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { motion } from "framer-motion";
 
-function CourseCard({ courseInfo }) {
+function CourseCard({ courseInfo, handleCourseCard }) {
   const typeIcons = {
     PDF: <PictureAsPdfIcon className="text-red-500" />,
     Image: <ImageIcon className="text-blue-500" />,
@@ -19,14 +19,15 @@ function CourseCard({ courseInfo }) {
       transition: { delay: i * 0.1 },
     }),
   };
+  console.log(courseInfo);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-6 gap-5 p-4">
       {courseInfo.map((item, index) => {
         const types = [];
-        if (item.Video) types.push("Video");
         if (item.pdf) types.push("PDF");
         if (item.images) types.push("Image");
+        if (item.video) types.push("Video");
 
         return (
           <motion.div
@@ -36,14 +37,17 @@ function CourseCard({ courseInfo }) {
             custom={index}
             initial="hidden"
             animate="visible"
-            className="bg-white shadow-md border border-l-blue-500 border-b-blue-400 border-r-blue-500  md:rounded-2xl rounded-xl flex flex-col hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 md:w-full max-w-sm mx-auto"
+            className="bg-white hover:shadow-blue-500 shadow-sm border  border-gray-400 md:rounded-2xl 
+            rounded-xl flex flex-col hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 md:w-full max-w-sm mx-auto  cursor-pointer"
+            onClick={() => handleCourseCard(item)}
           >
             <img
-              src={item.introimage || "/placeholder.jpg"}
+              src={item.introimg}
               alt="Course Thumbnail"
-              className="w-full h-48 object-cover md:rounded-t-2xl rounded-t-xl"
+              loading="lazy"
+              className="w-full h-48 object-cover md:rounded-t-2xl rounded-t-xl border border-b-2 border-black"
             />
-
+ 
             <div className="p-4 flex-1 flex flex-col">
               <h2 className="font-bold text-xl mb-1">{item.courseName}</h2>
               <p className="text-gray-800 text-lg mb-1">

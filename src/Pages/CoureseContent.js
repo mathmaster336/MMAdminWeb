@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
 
 function CoureseContent() {
-  return (
-    <div>
-      
-    </div>
-  )
+  const location = useLocation();
+  
+  return <div></div>;
 }
 
-export default CoureseContent
+export default CoureseContent;

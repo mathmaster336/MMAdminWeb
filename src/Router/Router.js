@@ -8,6 +8,7 @@ import { Navigate, useRoutes } from "react-router-dom";
 import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
 import MMapi from "../Services/MMapi";
 import AdminLayput from "../Layouts/AdminLayout";
+import CoureseContent from "../Pages/CoureseContent";
 
 const Router = () => {
   // const AdminLayput = Loadable(lazy(() => import("../Layouts/AdminLayout")));
@@ -74,6 +75,7 @@ const Router = () => {
         { path: "/home", element: <Home /> },
         { path: "/addcourses", element: <AddCourses /> },
         { path: "/courses", element: <Courses /> },
+        {path:"/courses/coursecontent", element:<CoureseContent />}
       ],
     },
   ]);

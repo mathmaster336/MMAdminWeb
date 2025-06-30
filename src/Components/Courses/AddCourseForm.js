@@ -13,8 +13,12 @@ import { convertToBase64 } from "../../Utils/HelperMethods/base64Helper";
 import { storage, db } from "../../firebase.js";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 const AddCourseForm = ({ fetureStep, setfetureStep }) => {
+  const [ Substatus, setSubstatus ] = useState(false);
+
   const [img, setimg] = useState("");
   const [formData, setFormData] = useState({
     courseName: "",
@@ -69,43 +73,121 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
   };
 
   // Handle Submit
+  // const handleSubmit = async (e) => {
+  //   debugger;
+  //   e.preventDefault();
+  //   const validationErrors = validateForm();
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //     // alert("Please fill all required fields.");
+  //     return;
+  //   }
+  //   setErrors({});
+
+  //   // const base64image = await convertToBase64(media.introimg);
+  //   // console.log(media.introVideo.name);
+  //   // console.log(media.introVideo);
+
+  //   const storageRefimg = ref(
+  //     storage,
+  //     `courses/${formData.courseName}/${media.introimg.name}`
+  //   );
+  //   await uploadBytes(storageRefimg, formData.introimg);
+  //   const thumbnailurl = await getDownloadURL(storageRefimg);
+
+  //   const storageRef = ref(
+  //     storage,
+  //     `courses/${formData.courseName}/${media.introVideo.name}`
+  //   );
+  //   await uploadBytes(storageRef, media.introVideo); // ✅ Fixed here
+  //   const url = await getDownloadURL(storageRef);
+
+  //   const courseInfo = {
+  //     courseName: formData.courseName,
+  //     price: formData.price,
+  //     desc: formData.description,
+  //     mentorName: formData.mentorName,
+  //     language: formData.language,
+  //     shortdesc: formData.sdescription,
+  //     introimg: thumbnailurl,
+  //     introVideo: url,
+  //     video: contentTypes.video,
+  //     pdf: contentTypes.pdf,
+  //     images: contentTypes.images,
+  //   };
+
+  //   await addDoc(collection(db, "courses"), courseInfo);
+  //   alert("Course added successfully!");
+  //   setFormData({
+  //     courseName: "",
+  //     price: "",
+  //     description: "",
+  //     sdescription: "",
+  //     mentorName: "",
+  //     language: "",
+  //   });
+
+  //   setMedia({
+  //     introimg: null,
+  //     introVideo: null,
+  //   });
+
+  //   setContentTypes({
+  //     video: false,
+  //     pdf: false,
+  //     images: false,
+  //   });
+  // };
+
   const handleSubmit = async (e) => {
-    debugger;
+
+    debugger
+    setSubstatus(true);
     e.preventDefault();
+    
+    // 1️⃣ Validate the form first
     const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
-      // alert("Please fill all required fields.");
       return;
     }
     setErrors({});
 
-    const base64image = await convertToBase64(media.introimg);
-    // console.log(media.introVideo.name);
-    // console.log(media.introVideo);
-    const storageRef = ref(
-      storage,
-      `courses/${formData.courseName}/${media.introVideo.name}`
-    );
-    await uploadBytes(storageRef, media.introVideo); // ✅ Fixed here
-    const url = await getDownloadURL(storageRef);
+    /* ----------  UPLOAD COVER IMAGE  ---------- */
+    // Always source the File object from the same place.
+    const { introimg, introVideo } = media; // <‑‑ file inputs
+    const { courseName } = formData; // <‑‑ text inputs
 
+    // (a) Image
+    const imgRef = ref(storage, `courses/${courseName}/${introimg.name}`);
+    const imgSnap = await uploadBytes(imgRef, introimg);
+    const thumbnailUrl = await getDownloadURL(imgSnap.ref);
+
+    // (b) Intro video (optional)
+    const vidRef = ref(storage, `courses/${courseName}/${introVideo.name}`);
+    const vidSnap = await uploadBytes(vidRef, introVideo);
+    const videoUrl = await getDownloadURL(vidSnap.ref);
+
+    /* ----------  WRITE ONE COURSE DOC  ---------- */
     const courseInfo = {
-      courseName: formData.courseName,
+      courseName,
       price: formData.price,
       desc: formData.description,
+      shortdesc: formData.sdescription,
       mentorName: formData.mentorName,
       language: formData.language,
-      shortdesc: formData.sdescription,
-      introimg: base64image,
-      introVideo: url,
+      introimg: thumbnailUrl, // ✅ Real HTTPS link
+      introVideo: videoUrl, // ✅ Real HTTPS link
       video: contentTypes.video,
       pdf: contentTypes.pdf,
       images: contentTypes.images,
+      createdAt: Date.now(), // helpful for ordering later
     };
 
     await addDoc(collection(db, "courses"), courseInfo);
     alert("Course added successfully!");
+
+    // Reset UI state
     setFormData({
       courseName: "",
       price: "",
@@ -114,17 +196,9 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
       mentorName: "",
       language: "",
     });
-
-    setMedia({
-      introimg: null,
-      introVideo: null,
-    });
-
-    setContentTypes({
-      video: false,
-      pdf: false,
-      images: false,
-    });
+    setMedia({ introimg: null, introVideo: null });
+    setContentTypes({ video: false, pdf: false, images: false });
+    setSubstatus(false)
   };
 
   const validateForm = () => {
@@ -314,7 +388,7 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
           variant="contained"
           className="hover:bg-blue-100 hover:text-gray-700 font-bold"
         >
-          Upload Course
+         {!Substatus ?"Upload Course":<CircularProgress />} 
         </Button>
       </div>
     </div>
