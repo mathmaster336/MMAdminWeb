@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Popover,
@@ -13,10 +13,18 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../../ContextApi/AppContenxt";
 import GolfCourseIcon from "@mui/icons-material/GolfCourse";
+import { addCourseContent, getDocumentById } from "../../FBAdapters/dbMethods";
+import { serverTimestamp } from "firebase/firestore";
+import { storage } from "../../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getVideoDuration } from "../../Services/getVideoDuration ";
 
 function CourseContentComponent() {
-  const { courseData } = useAppContext(); // ✅ Access context
-  const { courseId } = useParams();
+  // const { courseData } = useAppContext(); // ✅ Access context
+  const { courseId, folderID } = useParams();
+  const [courseData, setCourseData] = useState({});
+
+  console.log(courseData + "CourseDAta");
 
   const [currentFolderId, setCurrentFolderId] = useState(courseId);
 
@@ -33,18 +41,46 @@ function CourseContentComponent() {
   const createOpen = Boolean(createAnchorEl);
   const uploadOpen = Boolean(uploadAnchorEl);
 
+  // CourseData
+  useEffect(() => {
+    fetchCourseData();
+  }, [courseData]);
+
+  const fetchCourseData = async () => {
+    const courseData = await getDocumentById("courses", courseId);
+    setCourseData(courseData);
+  };
+
   // 🔹 Folder actions
-  const handleCreateClick = (event) => setCreateAnchorEl(event.currentTarget);
+  const handleCreateClick = (event) => {
+    setCreateAnchorEl(event.currentTarget);
+  };
   const handleCreateClose = () => {
     setCreateAnchorEl(null);
     setFolderName("");
   };
   const handleCreateFolder = () => {
+    debugger;
     if (!folderName.trim()) {
       alert("Enter a valid folder name");
       return;
     }
-    console.log("📁 Creating folder:", folderName, "in", currentFolderId);
+    const folderdata = {
+      parentId: courseId,
+      folderName: folderName,
+      createdBy: "admin",
+      type: "folder",
+      isDeleted: false,
+    };
+
+    const folderID = addCourseContent(
+      "courses",
+      courseData.id,
+      "folder",
+      folderdata
+    );
+
+    // console.log("📁 Creating folder:", folderName, "in", currentFolderId);
     alert(`Mock: Folder "${folderName}" created`);
     handleCreateClose();
   };
@@ -57,18 +93,43 @@ function CourseContentComponent() {
     setFileTitle("");
     setFile(null);
   };
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    debugger;
     if (!fileTitle || !contentType || !file) {
       alert("Please complete all fields.");
       return;
     }
 
-    console.log("📤 Uploading:", {
+    const contentRef = ref(
+      storage,
+      `courses/${courseData.courseName}/Content/${contentType}`
+    );
+    const ContentSnap = await uploadBytes(contentRef, file);
+    const contentUrl = await getDownloadURL(ContentSnap.ref);
+
+    const contentData = {
       title: fileTitle,
-      type: contentType,
-      file,
-      folderId: currentFolderId,
-    });
+      url: contentUrl,
+      isFreePreview: false,
+      order: 0,
+      createdAt: serverTimestamp(),
+      contentType: "storage",
+    };
+
+    // ✅ Add duration only if content type is 'video'
+    if (contentType === "video") {
+      const duration = await getVideoDuration(file); // assuming it's an async function
+      contentData.duration = duration;
+    }
+
+    const contentID = await addCourseContent(
+      "courses",
+      courseId,
+      contentType,
+      contentData
+    );
+
+    console.log(contentID);
 
     alert("Mock: File ready to upload!");
     handleUploadClose();

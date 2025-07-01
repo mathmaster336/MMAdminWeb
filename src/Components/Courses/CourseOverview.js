@@ -46,7 +46,7 @@ function CourseOverview({ setcourseStep}) {
           <h1 className="text-6xl hover:text-blue-700 mt-10  font-bold text-blue-600">
             {courseData.courseName}
           </h1>
-          <p className="mt-2 text-2xl    ">Mentor: <span className="font-semibold">{courseData.mentorName}</span></p>
+          <p className="mt-2 text-2xl">Mentor: <span className="font-semibold">{courseData.mentorName}</span></p>
           <p className="mt-4 text-xl">Language: {courseData.language}</p>
           <p className="mt-4 text-lg">{courseData.desc}</p>
 
@@ -73,15 +73,7 @@ function CourseOverview({ setcourseStep}) {
         </div>
         {/* Right Content */}
         <div className="w-full md:w-[60%]  justify-center items-center p-6">
-          {/* <iframe
-          width="100%"
-          height="315"
-          src={CourseData.introVideo}
-          title="Course Intro Video"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="rounded shadow-md"
-        /> */}
+          
           <video
             width="800"
             height="400"

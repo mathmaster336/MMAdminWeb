@@ -6,6 +6,7 @@ import {
   updateDoc,
   addDoc,
   serverTimestamp,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -18,6 +19,29 @@ export async function readCollection(collectionName) {
     ...doc.data(),
   }));
   return data;
+}
+
+// Read Data By Collection name And ID
+export async function getDocumentById(collectionName, documentId) {
+  try {
+    const docRef = doc(db, collectionName, documentId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      };
+    } else {
+      console.warn(
+        `No document found in ${collectionName} with ID: ${documentId}`
+      );
+      return null;
+    }
+  } catch (error) {
+    console.error("🔥 Error fetching document:", error);
+    throw error;
+  }
 }
 
 // ✅ Add or overwrite a document with a specific ID
@@ -44,6 +68,34 @@ export const uploadToFirestore = async (collectionName, data) => {
     return docRef.id;
   } catch (error) {
     console.error("Error uploading document:", error);
+    throw error;
+  }
+};
+
+// ✅  Add A Data inside of Collection name as subcollections
+export const addCourseContent = async (
+  collectionName,
+  courseId,
+  subcollection,
+  data
+) => {
+  debugger;
+  try {
+    const subcollectionRef = collection(
+      db,
+      collectionName,
+      courseId,
+      subcollection
+    );
+    const docRef = await addDoc(subcollectionRef, {
+      ...data,
+      createdAt: serverTimestamp(),
+    });
+
+    console.log(`Added to Courses/${courseId}/${subcollection}/${docRef.id}`);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding to subcollection:", error);
     throw error;
   }
 };

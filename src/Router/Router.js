@@ -79,6 +79,8 @@ const Router = () => {
         { path: "/addcourses", element: <AddCourses /> },
         { path: "/courses", element: <Courses /> },
         {path:"/courses/coursecontent/:courseId", element:<CoureseContent />},
+        {path:"/courses/coursecontent/:courseId/:folderId", element:<CoureseContent />},
+
         {path:"*",element:<NotFoundPage />}
       ],
     },
