@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CourseCard from "../Components/Courses/CourseCard";
 import { useNavigate } from "react-router-dom";
 import CourseOverview from "../Components/Courses/CourseOverview";
-import MMapi from "../Services/MMapi";
+import {MMapi,ContentApi} from "../Services/MMapi";
 import { useAppContext } from "../ContextApi/AppContenxt";
 
 function Courses() {
@@ -40,7 +40,7 @@ function Courses() {
     debugger;
     try {
       const req = {};
-      const res = await MMapi.post("/courses/allcourses", req);
+      const res = await ContentApi.post("/courses/allcourses", req);
 
       setcourseInfo(res); // assuming res is your actual data
     } catch (error) {}

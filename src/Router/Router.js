@@ -6,7 +6,7 @@ import AddCourses from "../Pages/AddCourses";
 import Courses from "../Pages/Courses";
 import { Navigate, useRoutes } from "react-router-dom";
 import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
-import MMapi from "../Services/MMapi";
+import {MMapi} from "../Services/MMapi";
 import AdminLayput from "../Layouts/AdminLayout";
 import CoureseContent from "../Pages/CoureseContent";
 import NotFoundPage from "../NotFoundPage";
