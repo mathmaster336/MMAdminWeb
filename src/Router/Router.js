@@ -9,6 +9,7 @@ import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
 import MMapi from "../Services/MMapi";
 import AdminLayput from "../Layouts/AdminLayout";
 import CoureseContent from "../Pages/CoureseContent";
+import NotFoundPage from "../NotFoundPage";
 
 const Router = () => {
   // const AdminLayput = Loadable(lazy(() => import("../Layouts/AdminLayout")));
@@ -62,6 +63,8 @@ const Router = () => {
           path: "/register",
           element: <Register />,
         },
+        {path:"*",element:<NotFoundPage />},
+
       ],
     },
     {
@@ -75,7 +78,8 @@ const Router = () => {
         { path: "/home", element: <Home /> },
         { path: "/addcourses", element: <AddCourses /> },
         { path: "/courses", element: <Courses /> },
-        {path:"/courses/coursecontent", element:<CoureseContent />}
+        {path:"/courses/coursecontent/:courseId", element:<CoureseContent />},
+        {path:"*",element:<NotFoundPage />}
       ],
     },
   ]);

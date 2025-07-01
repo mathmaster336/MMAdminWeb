@@ -28,7 +28,7 @@ function CourseCard({ courseInfo, handleCourseCard }) {
         if (item.pdf) types.push("PDF");
         if (item.images) types.push("Image");
         if (item.video) types.push("Video");
-
+        {console.log(item)}
         return (
           <motion.div
             /* …framer‑motion props… */

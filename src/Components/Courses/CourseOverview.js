@@ -7,17 +7,17 @@ import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MathMasterFeature from "./MathMasterFeature";
 import { data, useNavigate } from "react-router-dom";
-function CourseOverview({ CourseData ,setcourseStep}) {
-  // const location = useLocation();
-  // const data = location.state.data;
-  // console.log(data);
-  //   console.log("CourseIfon", Folder);
+import { useAppContext } from "../../ContextApi/AppContenxt";
+function CourseOverview({ setcourseStep}) {
+
 
   const navigate = useNavigate();
 
-  const handlecontent = () => {
+  const {courseData} =useAppContext();
+
+  const handlecontent = (CourseData) => {
     // navigate("/courses/content", { state: { data: Folder } });
-    navigate("/courses/coursecontent",{state:{CourseId:CourseData.Id}})
+    navigate(`/courses/coursecontent/${CourseData.id}`)
   };
 
   const typeIcons = {
@@ -26,9 +26,9 @@ function CourseOverview({ CourseData ,setcourseStep}) {
     Video: <VideocamIcon className="text-purple-500" />,
   };
   const types = [];
-  if (CourseData.video) types.push("Video");
-  if (CourseData.pdf) types.push("PDF");
-  if (CourseData.images) types.push("Image");
+  if (courseData.video) types.push("Video");
+  if (courseData.pdf) types.push("PDF");
+  if (courseData.images) types.push("Image");
 
   const hanldeback = () => {
     setcourseStep(true)
@@ -44,14 +44,14 @@ function CourseOverview({ CourseData ,setcourseStep}) {
         {/* Left Content */}
         <div className="w-full md:w-[60%] p-4">
           <h1 className="text-6xl hover:text-blue-700 mt-10  font-bold text-blue-600">
-            {CourseData.courseName}
+            {courseData.courseName}
           </h1>
-          <p className="mt-2 text-2xl    ">Mentor: <span className="font-semibold">{CourseData.mentorName}</span></p>
-          <p className="mt-4 text-xl">Language: {CourseData.language}</p>
-          <p className="mt-4 text-lg">{CourseData.desc}</p>
+          <p className="mt-2 text-2xl    ">Mentor: <span className="font-semibold">{courseData.mentorName}</span></p>
+          <p className="mt-4 text-xl">Language: {courseData.language}</p>
+          <p className="mt-4 text-lg">{courseData.desc}</p>
 
           <p className="mt-7 text-3xl font-medium">
-            Price: ₹{CourseData.price}
+            Price: ₹{courseData.price}
           </p>
 
           <div className="flex gap-[60px] mt-10">
@@ -66,7 +66,7 @@ function CourseOverview({ CourseData ,setcourseStep}) {
                 </button>
               ))}
             </div>
-            <Button variant="outlined" onClick={handlecontent} className="md:w-[30%] w-[40%] flex justify-center items-center h-10 hover:bg-blue-500 hover:text-white hover:shadow-md hover:shadow-blue-400 text-xl">
+            <Button variant="outlined" onClick={()=>handlecontent(courseData)} className="md:w-[30%] w-[40%] flex justify-center items-center h-10 hover:bg-blue-500 hover:text-white hover:shadow-md hover:shadow-blue-400 text-xl">
               Content
             </Button>
           </div>
@@ -88,7 +88,7 @@ function CourseOverview({ CourseData ,setcourseStep}) {
             controls
             className="rounded-xl border border-gray-400 shadow-lg  shadow-blue-300 hover:scale-105 duration-1000"
           >
-            <source src={CourseData.introVideo} type="video/mp4" />
+            <source src={courseData.introVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>

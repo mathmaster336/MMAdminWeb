@@ -1,9 +1,17 @@
 import React from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { CourseContentProvider } from "../ContextApi/CourseContentContext";
+import CourseContentComponent from "../Components/Courses/CourseContentComponent";
 
 function CoureseContent() {
-  const location = useLocation();
+
   
-  return <div></div>;
+
+  return (
+    <CourseContentProvider>
+      <CourseContentComponent />
+    </CourseContentProvider>
+  );
 }
 
 export default CoureseContent;
