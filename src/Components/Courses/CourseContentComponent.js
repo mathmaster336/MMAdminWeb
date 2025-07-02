@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../../ContextApi/AppContenxt";
 import GolfCourseIcon from "@mui/icons-material/GolfCourse";
 import { addCourseContent, getDocumentById } from "../../FBAdapters/dbMethods";
@@ -18,11 +18,17 @@ import { serverTimestamp } from "firebase/firestore";
 import { storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { getVideoDuration } from "../../Services/getVideoDuration ";
+import { ContentApi, MMapi } from "../../Services/MMapi";
+
+import Folder from "./Folder";
 
 function CourseContentComponent() {
   // const { courseData } = useAppContext(); // ✅ Access context
   const { courseId, folderId } = useParams();
   const [courseData, setCourseData] = useState({});
+
+  //navigate
+  const navigate = useNavigate();
 
   // console.log(courseId + " Check and Folder ID "+folderId);
 
@@ -41,14 +47,28 @@ function CourseContentComponent() {
   const createOpen = Boolean(createAnchorEl);
   const uploadOpen = Boolean(uploadAnchorEl);
 
+  // get Data from Api
+  const [ContentRes, SetContentRes] = useState({});
+
   // CourseData
   useEffect(() => {
     fetchCourseData();
+    getContentList();
   }, [courseData]);
 
   const fetchCourseData = async () => {
     const courseData = await getDocumentById("courses", courseId);
     setCourseData(courseData);
+  };
+
+  const getContentList = async () => {
+    const req = {
+      parentID: folderId || courseId,
+      courseID: courseId,
+    };
+
+    const res = await ContentApi.post("/courses/courseContent", req);
+    SetContentRes(res);
   };
 
   // 🔹 Folder actions
@@ -94,7 +114,6 @@ function CourseContentComponent() {
     setFile(null);
   };
   const handleUpload = async () => {
- 
     if (!fileTitle || !contentType || !file) {
       alert("Please complete all fields.");
       return;
@@ -111,6 +130,7 @@ function CourseContentComponent() {
       parentId: folderId || courseId,
       isFreePreview: false,
       order: 0,
+      type: contentType.toLowerCase(),
       createdAt: serverTimestamp(),
       contentType: "storage",
     };
@@ -132,6 +152,11 @@ function CourseContentComponent() {
 
     alert("Mock: File ready to upload!");
     handleUploadClose();
+  };
+
+  // Handling Folder Click and redirecting on page
+  const handleParentId = (id) => {
+    navigate(`/courses/coursecontent/${courseId}/${id}`);
   };
 
   return (
@@ -241,9 +266,19 @@ function CourseContentComponent() {
       </div>
 
       {/* 📂 Folder Info */}
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold">Current Folder ID:</h2>
-        <p className="text-gray-600">{currentFolderId}</p>
+      <div className="">
+        {ContentRes && (
+          <Folder
+            folders={ContentRes.folder}
+            videolist={ContentRes.video}
+            pdflist={ContentRes.pdf}
+            imagelist={ContentRes.image}
+            handleParentId={handleParentId}
+            courseId={courseId}
+          />
+        )}
+        {/* <h2 className="text-lg font-semibold">Current Folder ID:</h2>
+        <p className="text-gray-600">{currentFolderId}</p> */}
       </div>
     </div>
   );

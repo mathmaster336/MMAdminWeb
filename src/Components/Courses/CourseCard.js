@@ -3,6 +3,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { motion } from "framer-motion";
+import { Skeleton } from "@mui/material";
 
 function CourseCard({ courseInfo, handleCourseCard }) {
   const typeIcons = {
@@ -28,7 +29,9 @@ function CourseCard({ courseInfo, handleCourseCard }) {
         if (item.pdf) types.push("PDF");
         if (item.images) types.push("Image");
         if (item.video) types.push("Video");
-        {console.log(item)}
+        {
+          console.log(item);
+        }
         return (
           <motion.div
             /* …framer‑motion props… */
@@ -41,13 +44,24 @@ function CourseCard({ courseInfo, handleCourseCard }) {
             rounded-xl flex flex-col hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 md:w-full max-w-sm mx-auto  cursor-pointer"
             onClick={() => handleCourseCard(item)}
           >
-            <img
-              src={item.introimg}
-              alt="Course Thumbnail"
-              loading="lazy"
-              className="w-full h-48 object-cover md:rounded-t-2xl rounded-t-xl border border-b-2 border-black"
-            />
- 
+            {item.introimg ? (
+              <img
+                src={item.introimg}
+                alt="Course Thumbnail"
+                loading="lazy"
+                className="w-full h-48 object-cover md:rounded-t-2xl rounded-t-xl border border-b-2 border-black"
+              />
+            ) : (
+              <div className="p-2">
+                <Skeleton
+                  variant="rectangular"
+                  height={192} // Tailwind h-48
+                  width="100%" // Tailwind w-full
+                  className="rounded-t-xl"
+                />
+              </div>
+            )}
+
             <div className="p-4 flex-1 flex flex-col">
               <h2 className="font-bold text-xl mb-1">{item.courseName}</h2>
               <p className="text-gray-800 text-lg mb-1">
