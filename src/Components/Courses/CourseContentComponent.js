@@ -21,10 +21,10 @@ import { getVideoDuration } from "../../Services/getVideoDuration ";
 
 function CourseContentComponent() {
   // const { courseData } = useAppContext(); // ✅ Access context
-  const { courseId, folderID } = useParams();
+  const { courseId, folderId } = useParams();
   const [courseData, setCourseData] = useState({});
 
-  console.log(courseData + "CourseDAta");
+  // console.log(courseId + " Check and Folder ID "+folderId);
 
   const [currentFolderId, setCurrentFolderId] = useState(courseId);
 
@@ -66,14 +66,14 @@ function CourseContentComponent() {
       return;
     }
     const folderdata = {
-      parentId: courseId,
+      parentId: folderId || courseId,
       folderName: folderName,
       createdBy: "admin",
       type: "folder",
       isDeleted: false,
     };
 
-    const folderID = addCourseContent(
+    const folderFirestoreID = addCourseContent(
       "courses",
       courseData.id,
       "folder",
@@ -94,22 +94,21 @@ function CourseContentComponent() {
     setFile(null);
   };
   const handleUpload = async () => {
-    debugger;
+ 
     if (!fileTitle || !contentType || !file) {
       alert("Please complete all fields.");
       return;
     }
-
     const contentRef = ref(
       storage,
       `courses/${courseData.courseName}/Content/${contentType}`
     );
     const ContentSnap = await uploadBytes(contentRef, file);
     const contentUrl = await getDownloadURL(ContentSnap.ref);
-
     const contentData = {
       title: fileTitle,
       url: contentUrl,
+      parentId: folderId || courseId,
       isFreePreview: false,
       order: 0,
       createdAt: serverTimestamp(),

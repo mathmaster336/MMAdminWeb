@@ -63,7 +63,7 @@ const Router = () => {
           path: "/register",
           element: <Register />,
         },
-        {path:"*",element:<NotFoundPage />},
+        {path:"*",element:<NotFoundPage />}
 
       ],
     },
