@@ -4,7 +4,7 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import OtpInput from "react-otp-input";
 import { TextField } from "@mui/material";
-import {MMapi} from "../Services/MMapi";
+import { MMapi } from "../Services/MMapi";
 import { setLocalStorage } from "../Utils/HelperMethods/Localstorage";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";

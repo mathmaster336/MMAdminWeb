@@ -37,7 +37,7 @@ export default function NavBar() {
     { label: "Home", path: "/home" },
     { label: "courses", path: "/courses" },
     { label: "Add Courses", path: "/addcourses" },
-    { label: "My Profile", path: "/login" },
+    { label: "My Profile", path: "/myProfile" },
   ];
 
   return (

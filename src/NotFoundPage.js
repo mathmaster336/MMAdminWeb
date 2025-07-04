@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,14 @@ const MotionBox = motion(Box);
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
-  const token = getLocalStorage("token")
-  console.log(token)
+  const[token,settoken]=useState(getLocalStorage("token"))
+ 
+  useEffect(()=>{
+    settoken(getLocalStorage("token"))
+    console.log(token)
+
+  },[])
+  console.log(token);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-center px-4">
@@ -46,9 +52,9 @@ export default function NotFoundPage() {
           variant="contained"
           color="primary"
           className="!bg-blue-600 !text-white !rounded-xl !px-6 !py-2"
-          onClick={() => token ?navigate("/home"):navigate("/login")}
+          onClick={() => (token ? navigate("/home") : navigate("/login"))}
         >
-          {token ? "Go Home":"Go Login"}
+          {token ? "Go Home" : "Go Login"}
         </Button>
       </MotionBox>
     </div>

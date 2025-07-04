@@ -3,25 +3,26 @@ import Loadable from "../Loadable/loadable";
 import Login from "../Authentication/Login";
 import Register from "../Authentication/Register";
 import AddCourses from "../Pages/AddCourses";
-import Courses from "../Pages/Courses";
+// import Courses from "";
 import { Navigate, useRoutes } from "react-router-dom";
-import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
-import {MMapi} from "../Services/MMapi";
+import { deleteLocalStorage, getLocalStorage } from "../Utils/HelperMethods/Localstorage";
+import { MMapi } from "../Services/MMapi";
 import AdminLayput from "../Layouts/AdminLayout";
 import CoureseContent from "../Pages/CoureseContent";
 import NotFoundPage from "../NotFoundPage";
+import MyProfile from "../Pages/MyProfile";
+import ForgotPassword from "../Authentication/ForgetPassword";
 
 const Router = () => {
   // const AdminLayput = Loadable(lazy(() => import("../Layouts/AdminLayout")));
   const BlankLayout = Loadable(lazy(() => import("../Layouts/BlankLayout")));
   const Home = Loadable(lazy(() => import("../Pages/Home")));
-
+  const Courses =Loadable(lazy(()=>import("../Pages/Courses")))
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const token = getLocalStorage("token");
 
   useEffect(() => {
     const verifyToken = async () => {
-      debugger;
       if (!token) {
         setIsAuthenticated(false);
         return;
@@ -34,14 +35,18 @@ const Router = () => {
           // token is good
           setIsAuthenticated(true);
         } else {
+          debugger;
           // token invalid or tampered
           setIsAuthenticated(false);
+          deleteLocalStorage("token");
+
         }
       } catch (err) {
         console.error(
           "⛔ Token verification failed:",
           err.response?.data?.error || err.message
         );
+         deleteLocalStorage("token");
         return false;
       }
     };
@@ -63,8 +68,8 @@ const Router = () => {
           path: "/register",
           element: <Register />,
         },
-        {path:"*",element:<NotFoundPage />}
-
+        { path: "*", element: <NotFoundPage /> },
+        {path:"/adminForget",element:<ForgotPassword />}
       ],
     },
     {
@@ -78,10 +83,17 @@ const Router = () => {
         { path: "/home", element: <Home /> },
         { path: "/addcourses", element: <AddCourses /> },
         { path: "/courses", element: <Courses /> },
-        {path:"/courses/coursecontent/:courseId", element:<CoureseContent />},
-        {path:"/courses/coursecontent/:courseId/:folderId", element:<CoureseContent />},
+        {
+          path: "/courses/coursecontent/:courseId",
+          element: <CoureseContent />,
+        },
+        {
+          path: "/courses/coursecontent/:courseId/:folderId",
+          element: <CoureseContent />,
+        },
+        { path: "/myProfile", element: <MyProfile /> },
 
-        {path:"*",element:<NotFoundPage />}
+        { path: "*", element: <NotFoundPage /> },
       ],
     },
   ]);
