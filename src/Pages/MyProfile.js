@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -18,7 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 
 const MyProfile = () => {
   const adminData = {
-    name: "Vikas Sharma",
+    name: "Vikas",
     email: "vikas@example.com",
     role: "Admin",
     lastLogin: "2025-07-01 10:30 AM",
@@ -33,6 +33,10 @@ const MyProfile = () => {
     email: adminData.email,
     role: adminData.role,
   });
+
+  // const hasapi = useRef(false);
+
+
 
   const handleLogout = () => {
     alert("Logged out");

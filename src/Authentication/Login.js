@@ -68,7 +68,7 @@ export default function Login({ hasVerifiedRef = { current: false } }) {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("API Error. Please try again.");
+      toast.error(" Invalid credentials");
     } finally {
       setbuttonClick(false);
       hasVerifiedRef.current = false;
