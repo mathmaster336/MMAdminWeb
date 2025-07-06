@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CourseCard from "../Components/Courses/CourseCard";
 import { useNavigate } from "react-router-dom";
 import CourseOverview from "../Components/Courses/CourseOverview";
-import {MMapi,ContentApi} from "../Services/MMapi";
+import { MMapi, ContentApi } from "../Services/MMapi";
 import { useAppContext } from "../ContextApi/AppContenxt";
 
 function Courses() {
   const [courseStep, setcourseStep] = useState(true);
   // const [CourseData, setCourseData] = useState({});
-    const {courseData,setCourseData} =useAppContext();
-  
+  const { courseData, setCourseData } = useAppContext();
+
+  const Navigate = useNavigate();
+
   const [courseInfo, setcourseInfo] = useState([
     {
       courseName: "",
@@ -32,26 +34,47 @@ function Courses() {
     navigate("/course-content");
   };
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+  // useEffect(() => {
+  //   fetchCourses();
+  // }, []);
 
-  const fetchCourses = async () => {
-    debugger;
-    try {
-      const req = {};
-      const res = await ContentApi.post("/courses/allcourses", req);
+  // const fetchCourses = async () => {
+  //   debugger;
+  //   try {
+  //     const req = {};
+  //     const res = await ContentApi.post("/courses/allcourses", req);
 
-      setcourseInfo(res); // assuming res is your actual data
-    } catch (error) {}
-  };
+  //     setcourseInfo(res); // assuming res is your actual data
+  //   } catch (error) { }
+  // };
+
+  const hasFetched = useRef(false); // 👈 Track if API has been called
+
+  // ⛔️ Do NOT use useEffect, call API inline with a guard
+  if (!hasFetched.current) {
+    debugger
+    hasFetched.current = true;
+    (async () => {
+      try {
+        const res = await ContentApi.post("/courses/allcourses", {});
+        setcourseInfo(res);
+      } catch (error) {
+        console.error("Error fetching courses", error);
+      }
+    })();
+  }
 
   const handleCourseCard = (data) => {
-    debugger
-    // console.log(data);
+
+
     setCourseData(data);
-    console.log(courseData)
+
     setcourseStep(false);
+  };
+
+  const handlecontent = (CourseData) => {
+    // navigate("/courses/content", { state: { data: Folder } });
+    navigate(`/courses/coursecontent/${CourseData.id}`)
   };
 
   return (
@@ -60,9 +83,11 @@ function Courses() {
         <CourseCard
           courseInfo={courseInfo}
           handleCourseCard={handleCourseCard}
+          handlecontent={handlecontent}
         />
       ) : (
-        <CourseOverview setcourseStep={setcourseStep} />
+        <CourseOverview setcourseStep={setcourseStep}
+          handlecontent={handlecontent} />
       )}
     </div>
   );

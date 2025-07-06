@@ -5,7 +5,7 @@ import { getLocalStorage } from "../Utils/HelperMethods/Localstorage";
 // ✅ Axios for addmessage (auth, courses)
 export const MMapi = axios.create({
   baseURL: "https://authapi-t6kumycyca-em.a.run.app", 
-  // baseURL:"http://127.0.0.1:5001/mathmaster-cbffc/asia-south2/authApi"
+  // baseURL: "http://127.0.0.1:5001/mathmaster-cbffc/asia-south2/authApi"
   // or Firebase URL: "https://asia-south2-<project-id>.cloudfunctions.net/addmessage"
 });
 

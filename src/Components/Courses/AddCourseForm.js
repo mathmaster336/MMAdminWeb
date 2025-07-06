@@ -17,7 +17,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 
 const AddCourseForm = ({ fetureStep, setfetureStep }) => {
-  const [ Substatus, setSubstatus ] = useState(false);
+  const [Substatus, setSubstatus] = useState(false);
 
   const [img, setimg] = useState("");
   const [formData, setFormData] = useState({
@@ -27,6 +27,8 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
     mentorName: "",
     language: "",
     sdescription: "",
+    class: "",           // ➕ new field
+    medium: "",
   });
   // for Content type state
   const [contentTypes, setContentTypes] = useState({
@@ -72,79 +74,13 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
     }));
   };
 
-  // Handle Submit
-  // const handleSubmit = async (e) => {
-  //   debugger;
-  //   e.preventDefault();
-  //   const validationErrors = validateForm();
-  //   if (Object.keys(validationErrors).length > 0) {
-  //     setErrors(validationErrors);
-  //     // alert("Please fill all required fields.");
-  //     return;
-  //   }
-  //   setErrors({});
-
-  //   // const base64image = await convertToBase64(media.introimg);
-  //   // console.log(media.introVideo.name);
-  //   // console.log(media.introVideo);
-
-  //   const storageRefimg = ref(
-  //     storage,
-  //     `courses/${formData.courseName}/${media.introimg.name}`
-  //   );
-  //   await uploadBytes(storageRefimg, formData.introimg);
-  //   const thumbnailurl = await getDownloadURL(storageRefimg);
-
-  //   const storageRef = ref(
-  //     storage,
-  //     `courses/${formData.courseName}/${media.introVideo.name}`
-  //   );
-  //   await uploadBytes(storageRef, media.introVideo); // ✅ Fixed here
-  //   const url = await getDownloadURL(storageRef);
-
-  //   const courseInfo = {
-  //     courseName: formData.courseName,
-  //     price: formData.price,
-  //     desc: formData.description,
-  //     mentorName: formData.mentorName,
-  //     language: formData.language,
-  //     shortdesc: formData.sdescription,
-  //     introimg: thumbnailurl,
-  //     introVideo: url,
-  //     video: contentTypes.video,
-  //     pdf: contentTypes.pdf,
-  //     images: contentTypes.images,
-  //   };
-
-  //   await addDoc(collection(db, "courses"), courseInfo);
-  //   alert("Course added successfully!");
-  //   setFormData({
-  //     courseName: "",
-  //     price: "",
-  //     description: "",
-  //     sdescription: "",
-  //     mentorName: "",
-  //     language: "",
-  //   });
-
-  //   setMedia({
-  //     introimg: null,
-  //     introVideo: null,
-  //   });
-
-  //   setContentTypes({
-  //     video: false,
-  //     pdf: false,
-  //     images: false,
-  //   });
-  // };
 
   const handleSubmit = async (e) => {
 
     debugger
     setSubstatus(true);
     e.preventDefault();
-    
+
     // 1️⃣ Validate the form first
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length) {
@@ -182,6 +118,9 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
       pdf: contentTypes.pdf,
       images: contentTypes.images,
       createdAt: Date.now(), // helpful for ordering later
+      class: formData.class,
+      medium: formData.medium,
+      isActive: true,
     };
 
     await addDoc(collection(db, "courses"), courseInfo);
@@ -221,6 +160,9 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
     if (!contentTypes.video && !contentTypes.pdf && !contentTypes.images) {
       errors.contentTypes = "Select at least one content type";
     }
+    if (!formData.class?.trim()) errors.class = "Class is required";
+    if (!formData.medium?.trim()) errors.medium = "Medium is required";
+
 
     return errors;
   };
@@ -251,6 +193,41 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
           helperText={errors.courseName}
           fullWidth
         />
+        <TextField
+          select
+          label="Class (Grade)"
+          name="class"
+          value={formData.class}
+          onChange={handleTextChange}
+          error={Boolean(errors.class)}
+          helperText={errors.class}
+          fullWidth
+          SelectProps={{ native: true }}
+        >
+          <option value=""></option>
+          {[...Array(8)].map((_, i) => {
+            const grade = i + 5;
+            return <option key={grade} value={grade}>{grade}</option>;
+          })}
+        </TextField>
+
+        <TextField
+          select
+          label="Medium"
+          name="medium"
+          value={formData.medium}
+          onChange={handleTextChange}
+          error={Boolean(errors.medium)}
+          helperText={errors.medium}
+          fullWidth
+          SelectProps={{ native: true }}
+        >
+          <option value=""></option>
+          <option value="English">English</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Marathi">Marathi</option>
+          <option value="Other">Other</option>
+        </TextField>
 
         <TextField
           label="Price"
@@ -388,7 +365,7 @@ const AddCourseForm = ({ fetureStep, setfetureStep }) => {
           variant="contained"
           className="hover:bg-blue-100 hover:text-gray-700 font-bold"
         >
-         {!Substatus ?"Upload Course":<CircularProgress />} 
+          {!Substatus ? "Upload Course" : <CircularProgress />}
         </Button>
       </div>
     </div>

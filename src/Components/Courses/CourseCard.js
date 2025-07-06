@@ -4,13 +4,16 @@ import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { motion } from "framer-motion";
 import { Skeleton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-function CourseCard({ courseInfo, handleCourseCard }) {
+function CourseCard({ courseInfo, handleCourseCard, handlecontent }) {
   const typeIcons = {
     PDF: <PictureAsPdfIcon className="text-red-500" />,
     Image: <ImageIcon className="text-blue-500" />,
     Video: <VideocamIcon className="text-purple-500" />,
   };
+  const navigate = useNavigate();
+
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -20,7 +23,13 @@ function CourseCard({ courseInfo, handleCourseCard }) {
       transition: { delay: i * 0.1 },
     }),
   };
-  console.log(courseInfo);
+  // 
+
+  // const handleContemt=(courseData)=>{
+  //   
+  //    navigate(`/courses/coursecontent/${courseData.id}`)
+
+  // }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-6 gap-5 p-4">
@@ -30,7 +39,7 @@ function CourseCard({ courseInfo, handleCourseCard }) {
         if (item.images) types.push("Image");
         if (item.video) types.push("Video");
         {
-          console.log(item);
+          
         }
         return (
           <motion.div
@@ -90,7 +99,14 @@ function CourseCard({ courseInfo, handleCourseCard }) {
                 </div>
 
                 {/* main action button */}
-                <button className="bg-blue-600 text-white hover:bg-white hover:text-blue-600 border hover:border-blue-600 px-6 py-1 text-sm rounded transition-all duration-200 hover:scale-105">
+                <button className="bg-blue-600 text-white hover:bg-white hover:text-blue-600 border hover:border-blue-600 px-6 py-1 text-sm rounded transition-all duration-200 hover:scale-105"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlecontent(item)
+                  }
+                  }
+                >
+
                   Content
                 </button>
               </div>

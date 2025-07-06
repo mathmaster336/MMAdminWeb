@@ -8,8 +8,11 @@ import { MMapi } from "../Services/MMapi";
 import { setLocalStorage } from "../Utils/HelperMethods/Localstorage";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function AdminLogin() {
+
+export default function Login({ hasVerifiedRef = { current: false } }) {
   //   const [step, setStep] = useState(1); // 1 for email/password, 2 for phone
   const [step, setStep] = useState(1); // 1: email & password, 2: phone, 3: OTP
   const [email, setEmail] = useState("");
@@ -21,30 +24,54 @@ export default function AdminLogin() {
 
   const navigate = useNavigate();
 
+  // const handleEmailLogin = async () => {
+  //   setbuttonClick(true);
+  //   debugger;
+  //   const req = {
+  //     email,
+  //     password,
+  //   };
+
+  //   try {
+  //     const res = await MMapi.post("/auth/adminlogin", req);
+
+  //     if (res?.token) {
+  //       setLocalStorage("token", res.token);
+  //       alert("Login successful");
+  //       navigate("/home");
+  //       // Optionally redirect or fetch user data here
+  //     } else {
+  //       alert("Login failed. Invalid credentials.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Login error:", error);
+  //     alert("Api Error");
+  //   } finally {
+  //     setbuttonClick(false);
+  //   hasVerifiedRef.current = false;
+  //   }
+  // };
+
   const handleEmailLogin = async () => {
     setbuttonClick(true);
-    debugger;
-    const req = {
-      email,
-      password,
-    };
+    const req = { email, password };
 
     try {
       const res = await MMapi.post("/auth/adminlogin", req);
 
       if (res?.token) {
         setLocalStorage("token", res.token);
-        alert("Login successful");
+        toast.success("Login successful");
         navigate("/home");
-        // Optionally redirect or fetch user data here
       } else {
-        alert("Login failed. Invalid credentials.");
+        toast.error("Login failed. Invalid credentials.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Api Error");
+      toast.error("API Error. Please try again.");
     } finally {
       setbuttonClick(false);
+      hasVerifiedRef.current = false;
     }
   };
 
@@ -109,11 +136,10 @@ export default function AdminLogin() {
               <button
                 onClick={handleEmailLogin}
                 disabled={buttonClick}
-                className={`w-full py-3 mt-5 mb-5 rounded border ${
-                  buttonClick
+                className={`w-full py-3 mt-5 mb-5 rounded border ${buttonClick
                     ? "bg-blue-300 text-white cursor-not-allowed border border-blue-700"
                     : "bg-blue-500 text-white hover:bg-blue-600 hover:border-gray-600"
-                }`}
+                  }`}
               >
                 {!buttonClick ? (
                   "Login"

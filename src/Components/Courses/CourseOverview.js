@@ -8,17 +8,17 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MathMasterFeature from "./MathMasterFeature";
 import { data, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../ContextApi/AppContenxt";
-function CourseOverview({ setcourseStep}) {
+function CourseOverview({ setcourseStep, handlecontent }) {
 
 
   const navigate = useNavigate();
 
-  const {courseData} =useAppContext();
+  const { courseData } = useAppContext();
 
-  const handlecontent = (CourseData) => {
-    // navigate("/courses/content", { state: { data: Folder } });
-    navigate(`/courses/coursecontent/${CourseData.id}`)
-  };
+  // const handlecontent = (CourseData) => {
+  //   // navigate("/courses/content", { state: { data: Folder } });
+  //   navigate(`/courses/coursecontent/${CourseData.id}`)
+  // };
 
   const typeIcons = {
     PDF: <PictureAsPdfIcon className="text-red-500" />,
@@ -66,14 +66,14 @@ function CourseOverview({ setcourseStep}) {
                 </button>
               ))}
             </div>
-            <Button variant="outlined" onClick={()=>handlecontent(courseData)} className="md:w-[30%] w-[40%] flex justify-center items-center h-10 hover:bg-blue-500 hover:text-white hover:shadow-md hover:shadow-blue-400 text-xl">
+            <Button variant="outlined" onClick={() => handlecontent(courseData)} className="md:w-[30%] w-[40%] flex justify-center items-center h-10 hover:bg-blue-500 hover:text-white hover:shadow-md hover:shadow-blue-400 text-xl">
               Content
             </Button>
           </div>
         </div>
         {/* Right Content */}
-        <div className="w-full md:w-[60%]  justify-center items-center p-6">
-          
+        <div className="w-full h-auto md:w-[60%]  justify-center items-center p-6">
+
           <video
             width="800"
             height="400"

@@ -16,7 +16,7 @@ import GolfCourseIcon from "@mui/icons-material/GolfCourse";
 import { addCourseContent, getDocumentById } from "../../FBAdapters/dbMethods";
 import { serverTimestamp } from "firebase/firestore";
 import { storage } from "../../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 import { getVideoDuration } from "../../Services/getVideoDuration ";
 import { ContentApi, MMapi } from "../../Services/MMapi";
 
@@ -49,6 +49,9 @@ function CourseContentComponent() {
 
   // get Data from Api
   const [ContentRes, SetContentRes] = useState({});
+  // store a progess
+  const [progress, setProgress] = useState(0); // State to store upload progress
+
 
   // CourseData
   useEffect(() => {
@@ -113,45 +116,70 @@ function CourseContentComponent() {
     setFileTitle("");
     setFile(null);
   };
+
+  // Handle Upload 
   const handleUpload = async () => {
+    debugger
     if (!fileTitle || !contentType || !file) {
       alert("Please complete all fields.");
       return;
     }
+
     const contentRef = ref(
       storage,
-      `courses/${courseData.courseName}/Content/${contentType}`
-    );
-    const ContentSnap = await uploadBytes(contentRef, file);
-    const contentUrl = await getDownloadURL(ContentSnap.ref);
-    const contentData = {
-      title: fileTitle,
-      url: contentUrl,
-      parentId: folderId || courseId,
-      isFreePreview: false,
-      order: 0,
-      type: contentType.toLowerCase(),
-      createdAt: serverTimestamp(),
-      contentType: "storage",
-    };
-
-    // ✅ Add duration only if content type is 'video'
-    if (contentType === "video") {
-      const duration = await getVideoDuration(file); // assuming it's an async function
-      contentData.duration = duration;
-    }
-
-    const contentID = await addCourseContent(
-      "courses",
-      courseId,
-      contentType,
-      contentData
+      `courses/${courseData.courseName}/Content/${contentType}/${file.name}`
     );
 
-    console.log(contentID);
+    // ✅ Start resumable upload
+    const uploadTask = uploadBytesResumable(contentRef, file);
 
-    alert("Mock: File ready to upload!");
-    handleUploadClose();
+    // 🟡 Track upload progress
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        console.log(percent + "Percent Test")
+        setProgress(percent);
+      },
+      (error) => {
+        console.error("Upload failed:", error);
+        alert("Upload failed.");
+      },
+      async () => {
+        // ✅ Upload complete
+        const contentUrl = await getDownloadURL(uploadTask.snapshot.ref);
+
+        const contentData = {
+          title: fileTitle,
+          url: contentUrl,
+          parentId: folderId || courseId,
+          isFreePreview: false,
+          order: 0,
+          type: contentType.toLowerCase(),
+          createdAt: serverTimestamp(),
+          contentType: "storage",
+        };
+
+        if (contentType === "video") {
+          const duration = await getVideoDuration(file); // Ensure this exists
+          contentData.duration = duration;
+        }
+
+        const contentID = await addCourseContent(
+          "courses",
+          courseId,
+          contentType,
+          contentData
+        );
+
+        console.log("Uploaded content ID:", contentID);
+        alert("File uploaded successfully!");
+        setProgress(0); // Reset bar
+        handleUploadClose();
+      }
+    );
   };
 
   // Handling Folder Click and redirecting on page
@@ -248,10 +276,10 @@ function CourseContentComponent() {
                   contentType === "video"
                     ? "video/*"
                     : contentType === "pdf"
-                    ? "application/pdf"
-                    : contentType === "image"
-                    ? "image/*"
-                    : "*"
+                      ? "application/pdf"
+                      : contentType === "image"
+                        ? "image/*"
+                        : "*"
                 }
                 onChange={(e) => setFile(e.target.files[0])}
                 className="block w-full text-sm text-gray-500"
@@ -260,8 +288,22 @@ function CourseContentComponent() {
               <Button variant="contained" fullWidth onClick={handleUpload}>
                 Upload
               </Button>
+
+              {/* ✅ Progress Bar Section */}
+              {progress > 0 && (
+                <div className="space-y-1">
+                  <div className="w-full bg-gray-200 rounded h-3">
+                    <div
+                      className="bg-green-500 h-3 rounded transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-center text-gray-700">{progress}%</p>
+                </div>
+              )}
             </div>
           </Popover>
+
         </div>
       </div>
 
