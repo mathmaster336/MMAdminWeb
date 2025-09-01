@@ -67,7 +67,7 @@ export default function AddQuestionPapers({setfetureStep,fetureStep}) {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="flex justify-center w-1/2  bg-gray-100 p-2 relative"
+      className="flex justify-center md:w-1/2 w-full  bg-gray-100 p-2 relative"
     >
         <div className="absolute top-1 right-4 cursor-pointer">
                         <ClearIcon
@@ -78,7 +78,7 @@ export default function AddQuestionPapers({setfetureStep,fetureStep}) {
       <Card className=" w-full shadow-xl rounded-2xl">
         <CardContent>
           <h2 className="text-2xl font-bold mb-6 text-center text-green-600">
-            📄 Add / Update Question Paper
+            📄 Add Question Paper
           </h2>
 
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
