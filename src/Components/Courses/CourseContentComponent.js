@@ -30,7 +30,7 @@ function CourseContentComponent() {
   //navigate
   const navigate = useNavigate();
 
-  // console.log(courseId + " Check and Folder ID "+folderId);
+  console.log(courseId + " Check and Folder ID "+folderId);
 
   const [currentFolderId, setCurrentFolderId] = useState(courseId);
 
@@ -61,6 +61,7 @@ function CourseContentComponent() {
 
   const fetchCourseData = async () => {
     const courseData = await getDocumentById("courses", courseId);
+    // console.log(courseData,"CourseData")
     setCourseData(courseData);
   };
 
@@ -69,7 +70,7 @@ function CourseContentComponent() {
       parentID: folderId || courseId,
       courseID: courseId,
     };
-
+    // console.log("req",req)
     const res = await ContentApi.post("/courses/courseContent", req);
     SetContentRes(res);
   };

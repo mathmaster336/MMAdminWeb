@@ -23,6 +23,11 @@ export async function readCollection(collectionName) {
 
 // Read Data By Collection name And ID
 export async function getDocumentById(collectionName, documentId) {
+  if (!collectionName || !documentId) {
+    throw new Error("❌ collectionName and documentId are required.");
+  }
+  debugger
+
   try {
     const docRef = doc(db, collectionName, documentId);
     const docSnap = await getDoc(docRef);
@@ -33,13 +38,11 @@ export async function getDocumentById(collectionName, documentId) {
         ...docSnap.data(),
       };
     } else {
-      console.warn(
-        `No document found in ${collectionName} with ID: ${documentId}`
-      );
+      console.warn(`⚠️ No document found in "${collectionName}" with ID: ${documentId}`);
       return null;
     }
   } catch (error) {
-    console.error("🔥 Error fetching document:", error);
+    console.error("🔥 Firestore fetch error:", error.message);
     throw error;
   }
 }

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useRef, useState } from "react";
 import CourseCard from "../Components/Courses/CourseCard";
 import { useNavigate } from "react-router-dom";
 import CourseOverview from "../Components/Courses/CourseOverview";
-import { MMapi, ContentApi } from "../Services/MMapi";
+import {  ContentApi } from "../Services/MMapi";
 import { useAppContext } from "../ContextApi/AppContenxt";
 
 function Courses() {
@@ -50,6 +50,18 @@ function Courses() {
 
   const hasFetched = useRef(false); // 👈 Track if API has been called
 
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const res = await ContentApi.post("/courses/allcourses", {});
+  //       setcourseInfo(res.data); // ✅ Use res.data
+  //     } catch (error) {
+  //       console.error("Error fetching courses:", error);
+  //     }
+  //   };
+  //   fetchCourses();
+  // }, []);
+
   // ⛔️ Do NOT use useEffect, call API inline with a guard
   if (!hasFetched.current) {
     debugger
@@ -57,6 +69,7 @@ function Courses() {
     (async () => {
       try {
         const res = await ContentApi.post("/courses/allcourses", {});
+        // console.log(res)
         setcourseInfo(res);
       } catch (error) {
         console.error("Error fetching courses", error);
@@ -65,10 +78,7 @@ function Courses() {
   }
 
   const handleCourseCard = (data) => {
-
-
     setCourseData(data);
-
     setcourseStep(false);
   };
 
@@ -78,7 +88,7 @@ function Courses() {
   };
 
   return (
-    <div className="bg-gray-200 h-screen" >
+    <div className="bg-gray-200 h-full" >
       {courseStep ? (
         <CourseCard
           courseInfo={courseInfo}
